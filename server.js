@@ -23,13 +23,12 @@ app.post("/encrypt", (req, res) => {
         const readStream = new muhammara.PDFRStreamForBuffer(pdfBuffer);
         const writeStream = new muhammara.PDFWStreamForBuffer();
 
-        // Encrypt PDF
-        muhammara.recrypt(readStream, writeStream, {
-            password,
-            userPassword: password,
-            ownerPassword: password,
-            userProtectionFlag: 4,
-        });
+// Encrypt PDF
+muhammara.recrypt(readStream, writeStream, {
+    userPassword: password,  
+    ownerPassword: password, 
+    userProtectionFlag: 4,
+});
 
         const encryptedBase64 = writeStream.buffer.toString("base64");
 
