@@ -17,18 +17,21 @@ app.post("/encrypt", (req, res) => {
             });
         }
 
-        // Decode Base64 PDF
-        const pdfBuffer = Buffer.from(fileBase64, "base64");
+        // THE FIX: Sanitize the Base64 string to remove ServiceNow's hidden line breaks
+        const cleanBase64 = fileBase64.replace(/[^A-Za-z0-9+/=]/g, "");
+
+        // Decode the cleaned Base64 PDF
+        const pdfBuffer = Buffer.from(cleanBase64, "base64");
 
         const readStream = new muhammara.PDFRStreamForBuffer(pdfBuffer);
         const writeStream = new muhammara.PDFWStreamForBuffer();
 
-// Encrypt PDF
-muhammara.recrypt(readStream, writeStream, {
-    userPassword: password,  
-    ownerPassword: password, 
-    userProtectionFlag: 4,
-});
+        // Encrypt PDF
+        muhammara.recrypt(readStream, writeStream, {
+            userPassword: password,
+            ownerPassword: password,
+            userProtectionFlag: 4,
+        });
 
         const encryptedBase64 = writeStream.buffer.toString("base64");
 
